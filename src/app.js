@@ -13,17 +13,27 @@ const getText = () => [
 ];
 
 const form = document.querySelector('.generator');
-
 form.addEventListener('submit', e => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const amount = Number(formData.get('amount'));
+    const info = document.querySelector('.info');
+    const output = document.querySelector('.output');
+    const paragraphs = getText();
 
-    if (Number.isNaN(amount) || amount < 0 || amount > 9) {
-        console.error('Oops, your number should be between 1 and 10');
+    if (Number.isNaN(amount) || amount <= 0 || amount > paragraphs.length) {
+        const random = Math.floor(Math.random() * paragraphs.length);
+        info.classList.add('bg-warning', 'mb-3', 'p-3');
+        info.textContent = `Oops, your number should be between 1 and ${
+            paragraphs.length + 1
+        }. Getting a random paragraph`;
+        output.innerHTML = `<p>${paragraphs[random]}</p>`;
         return;
     }
 
-    const output = document.querySelector('.output');
-    output.textContent = `Getting ${amount} x paragraphs...`;
+    info.classList.remove('bg-warning', 'mb-3', 'p-3');
+    info.textContent = '';
+
+    const elements = paragraphs.slice(0, amount).map(item => `<p>${item}</p>`);
+    output.innerHTML = elements.join('');
 });
