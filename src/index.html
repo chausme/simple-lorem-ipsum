@@ -12,10 +12,32 @@
         />
         <link rel="stylesheet" href="./styles.scss" />
     </head>
-    <body>
+    <body class="bg-light">
         <main class="text-center my-5">
-            <h1>Simple Lorem Ipsum</h1>
+            <div class="container">
+                <h1 class="mb-5">Tired of boring lorem ipsum?</h1>
+                <div class="row mb-5">
+                    <div class="offset-md-3 col-md-6">
+                        <form action="">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="paragraphs">Paragraphs</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value="1"
+                                    class="form-control"
+                                    id="paragraphs"
+                                />
+                                <button class="btn btn-dark" type="button">Generate</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="offset-md-2 col-md-8">Some output goes here</div>
+                </div>
+            </div>
         </main>
+        <script src="./app.js" type="module"></script>
     </body>
-    <script src="./app.js" type="module"></script>
 </html>
