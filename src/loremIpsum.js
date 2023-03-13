@@ -15,6 +15,27 @@ class LoremIpsum {
         `Rutters Plate Fleet boom chandler Brethren of the Coast handsomely lookout marooned brigantine knave. Buccaneer gangway jack rum loot spyglass line Jack Tar fore gaff. Gaff topmast scuttle ballast swab draught measured fer yer chains dance the hempen jig Chain Shot yardarm.`,
     ];
 
+    #words = [];
+
+    // get words from preset sentences
+
+    #getWords() {
+        this.#text.forEach(line => {
+            line.replace(/[.,!\?]/g, '')
+                .split(' ')
+                .forEach(word => {
+                    this.#words.push(word.toLowerCase());
+                });
+        });
+    }
+
+    // generate paragraphs
+
+    #generateText() {
+        this.#getWords();
+        console.log(this.#words);
+    }
+
     // init
 
     init() {
@@ -26,12 +47,14 @@ class LoremIpsum {
             const output = document.querySelector('.output');
             const paragraphs = this.#text;
 
+            this.#generateText();
+
             if (Number.isNaN(amount) || amount <= 0 || amount > paragraphs.length) {
                 const random = Math.floor(Math.random() * paragraphs.length);
                 info.classList.add('bg-warning', 'mb-3', 'p-3');
                 info.textContent = `Oops, your number should be between 1 and ${
                     paragraphs.length + 1
-                }. Getting a random paragraph`;
+                } Getting a random paragraph`;
                 output.innerHTML = `<p>${paragraphs[random]}</p>`;
                 return;
             }
