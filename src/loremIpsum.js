@@ -1,7 +1,10 @@
 class LoremIpsum {
     #form = document.querySelector('.generator');
 
-    // predefined lorem text
+    static maxAmount = Number(10);
+    static maxWordsAmount = 100;
+
+    // predefined seed sentences
 
     #text = [
         `Jelly sweet roll jelly beans biscuit pie macaroon chocolate donut. Carrot cake caramels pie sweet apple pie tiramisu carrot cake. Marzipan marshmallow croissant tootsie roll lollipop. Cupcake lemon drops bear claw gummies. Jelly bear claw gummi bears lollipop cotton candy gummi bears chocolate bar cake cookie. Cupcake muffin danish muffin cookie gummies. Jelly beans tiramisu pudding. Toffee soufflé chocolate cake pastry brownie. Oat cake halvah sweet roll cotton candy croissant lollipop. Macaroon tiramisu chocolate bar candy candy carrot cake jelly sweet. Gummies croissant macaroon dessert. Chocolate cake dragée pie.`,
@@ -15,55 +18,98 @@ class LoremIpsum {
         `Rutters Plate Fleet boom chandler Brethren of the Coast handsomely lookout marooned brigantine knave. Buccaneer gangway jack rum loot spyglass line Jack Tar fore gaff. Gaff topmast scuttle ballast swab draught measured fer yer chains dance the hempen jig Chain Shot yardarm.`,
     ];
 
-    #words = [];
+    /**
+     * Shuffle array
+     * @param {array} array
+     * @source https://stackoverflow.com/a/12646864
+     */
+    #shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
 
-    // get words from preset sentences
+    /**
+     * Capitalize string
+     * @param {string} string
+     * @returns {string}
+     * @source https://stackoverflow.com/a/1026087
+     */
+    #capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
-    #getWords() {
+    /**
+     * Get words from seed sentences
+     * @param {number} amount
+     * @returns {array}
+     */
+    #getWords(amount) {
+        const words = [];
         this.#text.forEach(line => {
             line.replace(/[.,!\?]/g, '')
                 .split(' ')
                 .forEach(word => {
-                    this.#words.push(word.toLowerCase());
+                    words.push(word.toLowerCase());
                 });
         });
+        this.#shuffleArray(words);
+        return words.slice(0, amount);
     }
 
-    // generate paragraphs
+    /**
+     * Generate paragraphs
+     * @param {number} amount
+     * @returns {string}
+     * @todo add sentences
+     */
 
-    #generateText() {
-        this.#getWords();
-        console.log(this.#words);
+    #generateText(amount = 1) {
+        const output = [];
+
+        for (let i = 0; i < amount; i += 1) {
+            const randomWordsAmount = Math.floor(Math.random() * LoremIpsum.maxWordsAmount);
+            const words = this.#getWords(randomWordsAmount);
+            output.push(`<p>${this.#capitalizeFirstLetter(words.join(' '))}.</p>`);
+        }
+        return output;
     }
 
-    // init
+    /**
+     * Output paragraphs
+     * @param {number} amount
+     * @returns {void}
+     */
+
+    #outputText(amount = 1) {
+        const outputEl = document.querySelector('.output');
+        const infoEl = document.querySelector('.info');
+
+        if (Number.isNaN(amount) || amount <= 0 || amount > LoremIpsum.maxAmount) {
+            infoEl.classList.add('bg-warning', 'mb-3', 'p-3');
+            infoEl.textContent = `Oops, your number should be between 1 and ${LoremIpsum.maxAmount}. Getting a single paragraph...`;
+            outputEl.innerHTML = `${this.#generateText()[0]}`;
+            return;
+        }
+
+        infoEl.classList.remove('bg-warning', 'mb-3', 'p-3');
+        infoEl.textContent = '';
+
+        const paragraphs = this.#generateText(amount);
+        outputEl.innerHTML = paragraphs.join('');
+    }
+
+    /**
+     * Init
+     */
 
     init() {
         this.#form.addEventListener('submit', e => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const amount = Number(formData.get('amount'));
-            const info = document.querySelector('.info');
-            const output = document.querySelector('.output');
-            const paragraphs = this.#text;
-
-            this.#generateText();
-
-            if (Number.isNaN(amount) || amount <= 0 || amount > paragraphs.length) {
-                const random = Math.floor(Math.random() * paragraphs.length);
-                info.classList.add('bg-warning', 'mb-3', 'p-3');
-                info.textContent = `Oops, your number should be between 1 and ${
-                    paragraphs.length + 1
-                } Getting a random paragraph`;
-                output.innerHTML = `<p>${paragraphs[random]}</p>`;
-                return;
-            }
-
-            info.classList.remove('bg-warning', 'mb-3', 'p-3');
-            info.textContent = '';
-
-            const elements = paragraphs.slice(0, amount).map(item => `<p>${item}</p>`);
-            output.innerHTML = elements.join('');
+            this.#outputText(amount);
         });
     }
 }
