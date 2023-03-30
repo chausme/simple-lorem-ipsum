@@ -69,7 +69,7 @@ class LoremIpsum {
         const output = [];
 
         for (let i = 0; i < amount; i += 1) {
-            const randomWordsAmount = Math.floor(Math.random() * LoremIpsum.maxWordsAmount);
+            const randomWordsAmount = Math.floor(Math.random() * LoremIpsum.maxWordsAmount) + 50;
             const words = this.#getWords(randomWordsAmount);
             output.push(`<p>${this.#capitalizeFirstLetter(words.join(' '))}.</p>`);
         }
